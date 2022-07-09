@@ -29,7 +29,7 @@ defmodule SubastasWeb.RoomChannel do
   # broadcast to everyone in the current topic (room:lobby).
   @impl true
   def handle_in("shout", payload, socket) do
-    broadcast(socket, "shout", payload)
+    broadcast!(socket, "shout", payload)
     {:noreply, socket}
   end
 
