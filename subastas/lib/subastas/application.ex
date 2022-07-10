@@ -24,6 +24,8 @@ defmodule Subastas.Application do
     Supervisor.start_link(children, opts)
   end
 
+
+
   # Tell Phoenix to update the endpoint configuration
   # whenever the application is updated.
   @impl true

@@ -14,8 +14,13 @@ defmodule SubastasWeb.RoomChannel do
     {:ok, socket}
   end
 
-  def join("room:" <> _private_room_id, _params, _socket) do
-    {:error, %{reason: "unauthorized"}}
+  #def join("room:" <> _private_room_id, _params, _socket) do
+  #  {:error, %{reason: "unauthorized"}}
+  #end
+
+  #habria que reenviar los msj antiguos cada vez que se suscribe un nuevo cliente
+  def join("tag:" <> _private_room_id, _message, socket) do
+    {:ok, socket}
   end
 
   # Channels can be used in a request/response fashion
