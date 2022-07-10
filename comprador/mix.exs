@@ -18,7 +18,8 @@ defmodule Comprador.Mixfile do
   def application do
     [
       extra_applications: [:logger, :ssl],
-      mod: {Comprador, []}
+      mod: {Comprador, []},
+      applications: [:cowboy]
     ]
   end
 
@@ -27,7 +28,7 @@ defmodule Comprador.Mixfile do
       {:websocket_client, "~> 1.3"},
       {:jason, "~> 1.0", optional: true},
       {:phoenix, github: "phoenixframework/phoenix", tag: "v1.5.1", only: :test},
-      {:plug_cowboy, "~> 2.0", only: :test},
+      {:plug_cowboy, "~> 1.0"},
       {:ex_doc, "~> 0.18", only: :dev}
     ]
   end
