@@ -6,8 +6,14 @@ defmodule Vendedor do
   use Application
 
   def start(_type, _args) do
+    #{:ok, socket} = Vendedor.Socket.start_link([url: "ws://localhost:4000/socket/websocket"])
+    socket_opts = [
+      url: "ws://localhost:4000/socket/websocket"
+    ]
     # List all child processes to be supervised
     children = [
+      {Vendedor.Socket, {socket_opts, name: Vendedor.Socket}},
+      {Plug.Cowboy, scheme: :http, plug: Vendedor.Router, options: [port: 8080]},
       # Starts a worker by calling: Vendedor.Worker.start_link(arg)
       # {Vendedor.Worker, arg}
       Vendedor.ChannelSupervisor
