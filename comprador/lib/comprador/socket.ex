@@ -35,8 +35,18 @@ defmodule Comprador.Socket do
 
   @doc false
   def push(pid, %Message{} = message) do
+
     GenServer.call(pid, {:push, message})
   end
+
+   @doc false
+   #def pop(pid) do
+    #receive do
+      #{:ok, value} ->
+        #IO.inspect value
+    #end
+
+  #end
 
   @doc false
   def channel_join(pid, channel, topic, params) do
@@ -112,6 +122,7 @@ defmodule Comprador.Socket do
 
   @impl true
   def handle_call({:push, %Message{} = message}, _from, state) do
+
     {push, state} = push_message(message, state)
     {:reply, push, state}
   end
@@ -122,6 +133,7 @@ defmodule Comprador.Socket do
         _from,
         %{channels: channels} = state
       ) do
+
     case Map.get(channels, topic) do
       nil ->
         monitor_ref = Process.monitor(channel_pid)
@@ -173,6 +185,7 @@ defmodule Comprador.Socket do
 
   @impl true
   def handle_info(:flush, %{status: :connected} = state) do
+
     state.to_send_r
     |> Enum.reverse()
     |> Enum.each(&transport_send(&1, state))
@@ -182,6 +195,7 @@ defmodule Comprador.Socket do
 
   @impl true
   def handle_info(:flush, state) do
+
     :erlang.send_after(100, self(), :flush)
     {:noreply, state}
   end
@@ -237,6 +251,7 @@ defmodule Comprador.Socket do
       nil -> :noop
       {channel_pid, _} -> send(channel_pid, decoded)
     end
+
   end
 
   defp transport_send(message, %{
@@ -274,4 +289,6 @@ defmodule Comprador.Socket do
     state = %{state | ref: ref, to_send_r: [push | state.to_send_r]}
     {push, state}
   end
+
+
 end

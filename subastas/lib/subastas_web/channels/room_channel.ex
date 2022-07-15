@@ -38,6 +38,12 @@ defmodule SubastasWeb.RoomChannel do
     {:noreply, socket}
   end
 
+  @impl true
+  def handle_in("subastas", payload, socket) do
+    broadcast!(socket, "subastas", payload)
+    {:noreply, socket}
+  end
+
   # Add authorization logic here as required.
   defp authorized?(_payload) do
     true

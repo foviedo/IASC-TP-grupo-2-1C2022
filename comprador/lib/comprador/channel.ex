@@ -105,6 +105,7 @@ defmodule Comprador.Channel do
         {pid, _ref} = from,
         %{socket: socket, topic: topic, params: params} = state
       ) do
+
     case Socket.channel_join(socket, self(), topic, params) do
       {:ok, push} ->
         {:noreply,
@@ -136,6 +137,7 @@ defmodule Comprador.Channel do
 
   @impl true
   def handle_cast({:push, event, payload}, %{socket: socket, topic: topic} = state) do
+
     message = %Message{
       topic: topic,
       event: event,

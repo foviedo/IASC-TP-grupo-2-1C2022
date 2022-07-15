@@ -237,6 +237,8 @@ defmodule Vendedor.Socket do
       nil -> :noop
       {channel_pid, _} -> send(channel_pid, decoded)
     end
+
+
   end
 
   defp transport_send(message, %{

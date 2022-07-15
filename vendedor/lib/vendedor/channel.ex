@@ -140,8 +140,7 @@ defmodule Vendedor.Channel do
       topic: topic,
       event: event,
       payload: payload,
-      channel_pid: self(),
-      join_ref: state.join_ref
+      channel_pid: self()
     }
 
     Socket.push(socket, message)
