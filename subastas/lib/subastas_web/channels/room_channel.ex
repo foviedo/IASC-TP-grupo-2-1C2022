@@ -1,6 +1,8 @@
 defmodule SubastasWeb.RoomChannel do
   use SubastasWeb, :channel
 
+  alias SubastasWeb.{ColaMensaje}
+
   @impl true
   def join("room:lobby", payload, socket) do
     if authorized?(payload) do
@@ -10,17 +12,24 @@ defmodule SubastasWeb.RoomChannel do
     end
   end
 
-  def join("room:lobby", _message, socket) do
-    {:ok, socket}
-  end
+  #def join("room:lobby", _message, socket) do
+    #{:ok, socket}
+  #end
 
   #def join("room:" <> _private_room_id, _params, _socket) do
   #  {:error, %{reason: "unauthorized"}}
   #end
 
   #habria que reenviar los msj antiguos cada vez que se suscribe un nuevo cliente
-  def join("tag:" <> _private_room_id, _message, socket) do
-    {:ok, socket}
+  def join("tag:" <> _private_room_id, message, socket) do
+    case message do
+      "comprador" -> SubastasWeb.ColaMensaje.add_new_comprador(socket)
+                    {:ok, SubastasWeb.ColaMensaje.get_subastas, socket}
+
+      "vendedor" -> SubastasWeb.ColaMensaje.add_new_vendedor(socket)
+                    {:ok, socket}
+      _ -> {:ok, socket}
+    end
   end
 
   # Channels can be used in a request/response fashion
@@ -39,8 +48,16 @@ defmodule SubastasWeb.RoomChannel do
   end
 
   @impl true
-  def handle_in("subastas", payload, socket) do
-    broadcast!(socket, "subastas", payload)
+  def handle_in("new_subasta", payload, socket) do
+    SubastasWeb.ColaMensaje.add_new_subasta(payload)
+    broadcast!(socket, "new_subastas", payload)
+    {:noreply, socket}
+  end
+
+  @impl true
+  def handle_in("new_oferta", payload, socket) do
+    {:ok, subasta_actualizada} = SubastasWeb.ColaMensaje.add_new_oferta(payload)
+    broadcast!(socket, "new_oferta", subasta_actualizada)
     {:noreply, socket}
   end
 

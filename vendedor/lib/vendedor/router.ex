@@ -11,13 +11,13 @@ defmodule Vendedor.Router do
   plug :match
   plug :dispatch
 
-  post "/subastas" do
+  post "/new_subasta" do
     subasta = conn.body_params
     #la primera vez con 200, la segunda vez 500, la tercera 200...intercalando
-    {:ok, _response, channel} = Channel.join(Socket, "tag:" <> subasta["tag"])
-    :ok = Channel.push_async(channel, "subastas", subasta)
+    {:ok, _response, channel} = Channel.join(Socket, "tag:" <> subasta["tag"], "vendedor")
+    :ok = Channel.push_async(channel, "new_subasta", subasta)
     Channel.leave(channel)
-    send_resp(conn, 200, "Subasta exitosa")
+    send_resp(conn, 200, "New subasta exitosa")
   end
 
   match _ do

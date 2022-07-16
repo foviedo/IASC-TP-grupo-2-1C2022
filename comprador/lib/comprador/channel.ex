@@ -50,6 +50,7 @@ defmodule Comprador.Channel do
     if Process.alive?(socket_pid) and Socket.connected?(socket_pid) do
       case ChannelSupervisor.start_channel(socket_pid, topic, params) do
         {:ok, pid} -> do_join(pid, timeout)
+
         error -> error
       end
     else
@@ -178,6 +179,7 @@ defmodule Comprador.Channel do
       case GenServer.call(pid, :join, timeout) do
         {:ok, reply} ->
           Process.link(pid)
+          Comprador.ColaMensaje.add(reply)
           {:ok, reply, pid}
 
         error ->
