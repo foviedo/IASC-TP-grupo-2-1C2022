@@ -15,6 +15,7 @@ defmodule Subastas.Application do
       {Phoenix.PubSub, name: Subastas.PubSub},
       # Start the Endpoint (http/https)
       SubastasWeb.Endpoint,
+      {SubastasWeb.Scheduler, %{}}
 
       # Start a worker by calling: Subastas.Worker.start_link(arg)
       # {Subastas.Worker, arg}

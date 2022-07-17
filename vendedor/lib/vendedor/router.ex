@@ -20,6 +20,10 @@ defmodule Vendedor.Router do
     send_resp(conn, 200, "New subasta exitosa")
   end
 
+  get "/cancel_subasta/:id" do
+    #TODO
+  end
+
   match _ do
     send_resp(conn, 404, "Oops!")
   end

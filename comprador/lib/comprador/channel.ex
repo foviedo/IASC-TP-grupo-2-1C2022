@@ -195,4 +195,6 @@ defmodule Comprador.Channel do
 
   defp exit_reason({:timeout, _}), do: :timeout
   defp exit_reason(reason), do: reason
+
+
 end

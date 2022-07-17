@@ -247,6 +247,11 @@ defmodule Comprador.Socket do
        }) do
     decoded = Message.decode!(serializer, message, json_library)
 
+    case decoded.event do
+      "new_subastas" -> Comprador.ColaMensaje.add_new_subasta(decoded.payload)
+      "new_oferta" -> Comprador.ColaMensaje.add_new_subasta_ofertada(decoded.payload)
+      _ -> nil
+    end
     case Map.get(channels, decoded.topic) do
       nil -> :noop
       {channel_pid, _} -> send(channel_pid, decoded)
