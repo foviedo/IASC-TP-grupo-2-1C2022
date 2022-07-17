@@ -6,10 +6,17 @@ defmodule Comprador do
   use Application
 
   def start(_type, _args) do
+
+    socket_opts = [
+      url: "ws://localhost:4000/socket/websocket"
+    ]
+
     # List all child processes to be supervised
     children = [
-      #{Comprador.ColaMensaje, %{:new_subastas => [], :subastas_ofertadas => [], :mis_ofertas => []}},
-      {Comprador.ColaMensaje, []},
+      {Plug.Cowboy, scheme: :http, plug: Comprador.Router, options: [port: 8081]},
+      {Comprador.Socket, {socket_opts, name: Comprador.Socket}},
+      {Comprador.ColaMensaje, %{:subastas => [], :subastas_ofertadas => [], :mis_ofertas => []}},
+      #{Comprador.ColaMensaje, []},
       # Starts a worker by calling: Comprador.Worker.start_link(arg)
       # {Comprador.Worker, arg}
       Comprador.ChannelSupervisor

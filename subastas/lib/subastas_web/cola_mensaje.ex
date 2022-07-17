@@ -13,27 +13,15 @@ defmodule SubastasWeb.ColaMensaje do
   end
 
   def get_subastas do
-    Agent.get(__MODULE__, & &1[:subastas])
+    Agent.get(__MODULE__, & Map.get(&1, :subastas))
   end
 
   def get_cola do
     Agent.get(__MODULE__, & &1)
   end
 
-  defp replace_all(list, from, to) do
-    list
-    |> Enum.map(fn
-      ^from -> to
-      other -> other
-    end)
-  end
-
   def add_new_subasta(subasta) do
-    #IO.inspect State
-    #cola = Agent.get(__MODULE__, & &1)
-    subastas = & &1[:subastas] ++ [subasta]
-    #Agent.update(__MODULE__, &(&1[:subastas] ++ [subasta]))
-    Agent.update(__MODULE__, fn cola -> replace_all(cola, cola[:subastas], subastas) end)
+    Agent.update(__MODULE__, &Map.put(&1,:subastas, Map.get(&1,:subastas) ++ [subasta]))
   end
 
   def add_new_oferta(oferta) do
@@ -43,21 +31,11 @@ defmodule SubastasWeb.ColaMensaje do
   end
 
   def add_new_comprador(comprador) do
-    compradores = & &1.compradores ++ [comprador]
-    Agent.update(__MODULE__, &(&1
-    |> Enum.map(fn
-      :compradores-> compradores
-      other -> other
-    end)))
+    Agent.update(__MODULE__, &Map.put(&1,:compradores, Map.get(&1,:compradores) ++ [comprador]))
   end
 
   def add_new_vendedor(vendedor) do
-    vendedores = & &1.vendedores ++ [vendedor]
-    Agent.update(__MODULE__, &(&1
-    |> Enum.map(fn
-      :vendedores -> vendedores
-      other -> other
-    end)))
+    Agent.update(__MODULE__, &Map.put(&1,:vendedores, Map.get(&1,:vendedores) ++ [vendedor]))
   end
 
   def update_subasta(oferta) do

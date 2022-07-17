@@ -8,7 +8,7 @@ defmodule Subastas.Application do
   @impl true
   def start(_type, _args) do
     children = [
-      {SubastasWeb.ColaMensaje, [subastas: [], vendedores: [], compradores: [], ofertas: []]},
+      {SubastasWeb.ColaMensaje, %{subastas: [], vendedores: [], compradores: [], ofertas: []}},
       # Start the Telemetry supervisor
       SubastasWeb.Telemetry,
       # Start the PubSub system

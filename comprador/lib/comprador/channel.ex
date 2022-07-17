@@ -179,7 +179,7 @@ defmodule Comprador.Channel do
       case GenServer.call(pid, :join, timeout) do
         {:ok, reply} ->
           Process.link(pid)
-          Comprador.ColaMensaje.add(reply)
+          Comprador.ColaMensaje.add_new_subasta(reply)
           {:ok, reply, pid}
 
         error ->

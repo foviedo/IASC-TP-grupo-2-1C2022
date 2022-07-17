@@ -3,6 +3,9 @@ defmodule SubastasWeb.RoomChannel do
 
   alias SubastasWeb.{ColaMensaje}
 
+  require Logger
+
+
   @impl true
   def join("room:lobby", payload, socket) do
     if authorized?(payload) do
@@ -22,6 +25,7 @@ defmodule SubastasWeb.RoomChannel do
 
   #habria que reenviar los msj antiguos cada vez que se suscribe un nuevo cliente
   def join("tag:" <> _private_room_id, message, socket) do
+    Logger.warn(fn -> "Subastas #{inspect(SubastasWeb.ColaMensaje.get_subastas)}" end)
     case message do
       "comprador" -> SubastasWeb.ColaMensaje.add_new_comprador(socket)
                     {:ok, SubastasWeb.ColaMensaje.get_subastas, socket}
