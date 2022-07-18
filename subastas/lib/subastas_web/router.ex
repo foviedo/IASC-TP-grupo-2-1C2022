@@ -1,12 +1,22 @@
 defmodule SubastasWeb.Router do
-  use SubastasWeb, :router
+  use Plug.Router
+  #use SubastasWeb, :router
 
-  pipeline :api do
-    plug :accepts, ["json"]
-  end
+  plug Plug.Parsers,
+       parsers: [:json],
+       pass:  ["application/json"],
+       json_decoder: Jason
+  plug :match
+  plug :dispatch
 
   scope "/api", SubastasWeb do
     pipe_through :api
+  end
+
+
+  post "/cancel_subasta" do
+    id = conn.body_params["id"]
+    SubastasWeb.ColaMensaje.cancelar_subasta(id)
   end
 
 

@@ -48,6 +48,13 @@ defmodule SubastasWeb.RoomChannel do
     {:noreply, socket}
   end
 
+  @impl true
+  def handle_in("cancelar_subasta", payload, socket) do
+    SubastasWeb.ColaMensaje.cancelar_subasta(payload["id"])
+    broadcast!(socket, "cancelar_subasta", payload)
+    {:noreply, socket}
+  end
+
   @impl false
   def handle_out_fin_subasta(subasta) do
     subasta_terminada = SubastasWeb.ColaMensaje.update_subasta_estado(subasta, "terminada")
@@ -58,6 +65,8 @@ defmodule SubastasWeb.RoomChannel do
     ofertas = Enum.filter(SubastasWeb.ColaMensaje.get_ofertas,
     fn oferta -> oferta["id_subasta"] == id_subasta && oferta["precio"] == precio_ganado end)
 
+
+
     if ofertas !=[] do
       oferta_ganada = hd ofertas
       id_comprador_ganado = oferta_ganada["id_comprador"]
@@ -66,8 +75,8 @@ defmodule SubastasWeb.RoomChannel do
       push(comprador_ganado["socket"], "ganaste_subasta", subasta_terminada)
       broadcast!(comprador_ganado["socket"], "fin_subasta", subasta_terminada)
       {:noreply, comprador_ganado["socket"]}
-    else
-      broadcast!(comprador_ganado["socket"], "fin_subasta", subasta_terminada)
+    #else
+     # broadcast!(comprador_ganado["socket"], "fin_subasta", subasta_terminada)
     end
   end
 

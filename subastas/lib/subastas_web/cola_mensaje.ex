@@ -73,6 +73,15 @@ defmodule SubastasWeb.ColaMensaje do
     subasta_actualizada
   end
 
+  def cancelar_subasta(id) do
+    subasta = get_subasta(id)
+    update_subasta_estado(subasta, "cancelado")
+  end
+
+  defp get_subasta(id) do
+    hd(Enum.filter(get_subastas, fn subasta -> subasta["id"] == id end))
+  end
+
   def update_subasta_duracion(subasta) do
     subasta_actualizada = Map.update!(subasta, "duracion", fn duracion -> duracion - 1000 end)
     subastas = List.delete(get_subastas, subasta)
