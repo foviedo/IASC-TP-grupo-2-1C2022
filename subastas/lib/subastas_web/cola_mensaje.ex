@@ -22,12 +22,20 @@ defmodule SubastasWeb.ColaMensaje do
     Agent.get(__MODULE__, & Map.get(&1, :compradores))
   end
 
+  def get_ofertas do
+    Agent.get(__MODULE__, & Map.get(&1, :ofertas))
+  end
+
   def get_cola do
     Agent.get(__MODULE__, & &1)
   end
 
   def add_new_subasta(subasta) do
     Agent.update(__MODULE__, &Map.put(&1,:subastas, Map.get(&1,:subastas) ++ [subasta]))
+  end
+
+  def add_subasta_terminada(subasta) do
+    Agent.update(__MODULE__, &Map.put(&1,:subastas_terminadas, Map.get(&1,:subastas_terminadas) ++ [subasta]))
   end
 
   def add_new_oferta(oferta) do
@@ -59,20 +67,27 @@ defmodule SubastasWeb.ColaMensaje do
     subastas = Enum.filter(get_subastas, fn subasta -> subasta["id"] == oferta["id_subasta"] end)
     subasta = hd subastas
     subasta_actualizada = Map.update!(subasta, "precio", fn precio -> oferta["precio"] end)
-    subastas_actuales = get_subastas
-    subastas = Lista.delete(subastas_actuales, subasta)
-    Agent.update(__MODULE__,  &Map.put(&1,:subastas, subastas ++ [subasta_actualizada])
+    subastas_actuales = get_subastas()
+    subastas = List.delete(subastas_actuales, subasta)
+    Agent.update(__MODULE__,  &Map.put(&1,:subastas, subastas ++ [subasta_actualizada]))
     subasta_actualizada
   end
 
   def update_subasta_duracion(subasta) do
     subasta_actualizada = Map.update!(subasta, "duracion", fn duracion -> duracion - 1000 end)
-    subastas = Lista.delete(get_subastas, subasta)
-    Agent.update(__MODULE__,  &Map.put(&1,:subastas, subastas ++ [subasta_actualizada])
+    subastas = List.delete(get_subastas, subasta)
+    Agent.update(__MODULE__,  &Map.put(&1,:subastas, subastas ++ [subasta_actualizada]))
+  end
+
+  def update_subasta_estado(subasta, estado) do
+    subastas = List.delete(get_subastas, subasta)
+    subasta_actualizada = Map.update!(subasta, "estado", fn e -> estado end)
+    Agent.update(__MODULE__,  &Map.put(&1,:subastas, subastas ++ [subasta_actualizada]))
+    subasta_actualizada
   end
 
   def remove_subasta(subasta) do
-    subastas = Lista.delete(get_subastas, subasta)
-    Agent.update(__MODULE__,  &Map.put(&1,:subastas, subastas)
+    subastas = List.delete(get_subastas, subasta)
+    Agent.update(__MODULE__,  &Map.put(&1,:subastas, subastas))
   end
 end

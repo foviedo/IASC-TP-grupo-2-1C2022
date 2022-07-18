@@ -1,29 +1,9 @@
 defmodule SubastasWeb.RoomChannel do
   use SubastasWeb, :channel
 
-  alias SubastasWeb.{ColaMensaje}
-
   require Logger
 
-
   @impl true
-  def join("room:lobby", payload, socket) do
-    if authorized?(payload) do
-      {:ok, socket}
-    else
-      {:error, %{reason: "unauthorized"}}
-    end
-  end
-
-  #def join("room:lobby", _message, socket) do
-    #{:ok, socket}
-  #end
-
-  #def join("room:" <> _private_room_id, _params, _socket) do
-  #  {:error, %{reason: "unauthorized"}}
-  #end
-
-  #habria que reenviar los msj antiguos cada vez que se suscribe un nuevo cliente
   def join("tag:" <> _private_room_id, message, socket) do
     #Logger.warn(fn -> "Subastas #{inspect(SubastasWeb.ColaMensaje.get_subastas)}" end)
     case message do
@@ -51,13 +31,6 @@ defmodule SubastasWeb.RoomChannel do
     {:reply, {:ok, payload <> "osahouisfhuioahfssdasdioasfhio"}, socket}
   end
 
-  # It is also common to receive messages from the client and
-  # broadcast to everyone in the current topic (room:lobby).
-  @impl true
-  def handle_in("shout", payload, socket) do
-    broadcast!(socket, "shout", payload)
-    {:noreply, socket}
-  end
 
   @impl true
   def handle_in("new_subasta", payload, socket) do
@@ -69,23 +42,35 @@ defmodule SubastasWeb.RoomChannel do
   @impl true
   def handle_in("new_oferta", payload, socket) do
     SubastasWeb.ColaMensaje.add_new_oferta(payload)
-    subasta_actualizada = SubastasWeb.ColaMensaje.update_subasta_oferta(payload)
-    Logger.warn(fn -> "Compradores #{inspect(subasta_actualizada)}" end)
+    subasta_actualizada = SubastasWeb.ColaMensaje.update_subasta_estado(
+      SubastasWeb.ColaMensaje.update_subasta_oferta(payload), "ofertada")
     broadcast!(socket, "new_oferta", subasta_actualizada)
     {:noreply, socket}
   end
 
-  @impl true
-  def handle_out_fin_subasta(subasta, socket) do
-    SubastasWeb.ColaMensaje.remove_subasta(subasta)
-    #meter subasta en la lista de subastas_terminadas
-    broadcast!(socket, "fin_subasta", subasta)
+  @impl false
+  def handle_out_fin_subasta(subasta) do
+    subasta_terminada = SubastasWeb.ColaMensaje.update_subasta_estado(subasta, "terminada")
+
+    id_subasta = subasta["id"]
     precio_ganado = subasta["precio"]
-    #buscar el comprador que oferto la subasta con el precio_ganado y con buscar en la lista compradores sacando su
-    #socket, y mandarle ganaste
-    push(socket, "ganaste_subasta", subasta)
-    {:noreply, socket}
+
+    ofertas = Enum.filter(SubastasWeb.ColaMensaje.get_ofertas,
+    fn oferta -> oferta["id_subasta"] == id_subasta && oferta["precio"] == precio_ganado end)
+
+    if ofertas !=[] do
+      oferta_ganada = hd ofertas
+      id_comprador_ganado = oferta_ganada["id_comprador"]
+      comprador_ganado = hd (Enum.filter(SubastasWeb.ColaMensaje.get_compradores, fn comprador -> comprador["id"] == id_comprador_ganado end))
+
+      push(comprador_ganado["socket"], "ganaste_subasta", subasta_terminada)
+      broadcast!(comprador_ganado["socket"], "fin_subasta", subasta_terminada)
+      {:noreply, comprador_ganado["socket"]}
+    else
+      broadcast!(comprador_ganado["socket"], "fin_subasta", subasta_terminada)
+    end
   end
+
   # Add authorization logic here as required.
   defp authorized?(_payload) do
     true

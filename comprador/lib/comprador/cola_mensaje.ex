@@ -38,5 +38,11 @@ defmodule Comprador.ColaMensaje do
     Agent.update(__MODULE__, &Map.put(&1,:subastas_ofertadas, Map.get(&1,:subastas_ofertadas) ++ oferta))
   end
 
+  def remove_subasta(subasta) do
+    #buscar la subasta con el id de la subasta que llega subasta["id"], y despues borrarla de la lista &1[:subastas]
+    #subasta = XXXXX
+    #subastas = Lista.delete(get_subastas, subasta)
+    #Agent.update(__MODULE__,  &Map.put(&1,:subastas, subastas))
+  end
 
 end
