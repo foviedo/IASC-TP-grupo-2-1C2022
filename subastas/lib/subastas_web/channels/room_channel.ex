@@ -1,11 +1,15 @@
 defmodule SubastasWeb.RoomChannel do
   use SubastasWeb, :channel
+  alias Phoenix.Socket.Broadcast
+
 
   require Logger
 
   @impl true
   def join("tag:" <> _private_room_id, message, socket) do
     #Logger.warn(fn -> "Subastas #{inspect(SubastasWeb.ColaMensaje.get_subastas)}" end)
+    #Logger.warn(fn -> "Subastas #{inspect(SubastasWeb.ColaMensaje.get_subastas)}" end)
+   # Logger.warn(fn -> "Subastas #{inspect(message)}" end)
     case message do
       ["comprador", id] ->
         comprador = Enum.filter(SubastasWeb.ColaMensaje.get_compradores, fn comprador -> comprador.id == id end)
@@ -36,6 +40,7 @@ defmodule SubastasWeb.RoomChannel do
   def handle_in("new_subasta", payload, socket) do
     SubastasWeb.ColaMensaje.add_new_subasta(payload)
     broadcast!(socket, "new_subastas", payload)
+    Logger.warn(fn -> "Payloadd #{inspect(payload)}" end)
     {:noreply, socket}
   end
 
@@ -49,9 +54,10 @@ defmodule SubastasWeb.RoomChannel do
   end
 
   @impl true
-  def handle_in("cancelar_subasta", payload, socket) do
-    SubastasWeb.ColaMensaje.cancelar_subasta(payload["id"])
-    broadcast!(socket, "cancelar_subasta", payload)
+  def handle_in("cancel_subasta", payload, socket) do
+    SubastasWeb.ColaMensaje.cancelar_subasta(payload)
+    broadcast!(socket, "fin_subasta", payload)
+    Logger.warn(fn -> "Subastas #{inspect(SubastasWeb.ColaMensaje.get_subastas)}" end)
     {:noreply, socket}
   end
 
@@ -67,17 +73,38 @@ defmodule SubastasWeb.RoomChannel do
 
 
 
-    if ofertas !=[] do
-      oferta_ganada = hd ofertas
-      id_comprador_ganado = oferta_ganada["id_comprador"]
-      comprador_ganado = hd (Enum.filter(SubastasWeb.ColaMensaje.get_compradores, fn comprador -> comprador["id"] == id_comprador_ganado end))
+    #if ofertas !=[] do
+    #  oferta_ganada = hd ofertas
+    #  id_comprador_ganado = oferta_ganada["id_comprador"]
 
-      push(comprador_ganado["socket"], "ganaste_subasta", subasta_terminada)
-      broadcast!(comprador_ganado["socket"], "fin_subasta", subasta_terminada)
-      {:noreply, comprador_ganado["socket"]}
-    #else
-     # broadcast!(comprador_ganado["socket"], "fin_subasta", subasta_terminada)
-    end
+     # comprador_ganado = hd (Enum.filter(SubastasWeb.ColaMensaje.get_compradores, fn comprador -> comprador["id"] == id_comprador_ganado end))
+
+
+    #  push(comprador_ganado["socket"], "ganaste_subasta", subasta_terminada)
+
+    #  broadcast!(comprador_ganado["socket"], "fin_subasta", subasta_terminada)
+    #  {:noreply, comprador_ganado["socket"]}
+    #else TODO falta avisar que una subasta se termino sin ganador
+      comp_prueba=hd SubastasWeb.ColaMensaje.get_compradores
+      Logger.warn(fn -> "comp prueba #{inspect(comp_prueba)}" end)
+
+      Logger.warn(fn -> "Comrpador donde estas #{inspect(hd SubastasWeb.ColaMensaje.get_compradores)}" end)
+
+      Logger.warn(fn -> "PRUEBAAAAA #{inspect(comp_prueba.socket)} subasta terminada #{inspect(subasta_terminada)}" end)
+      #houston acá estan los problemas TODO
+      #broadcast(self(),"tag:fruta", "fin_subasta", subasta_terminada)
+
+
+       # {:ok, _, socket} =
+       #   SubastasWeb.UserSocket
+       #   |> socket("user_id", %{some: :assign})
+       #   |> subscribe_and_join(SubastasWeb.RoomChannel, "tag:fruta")
+
+#        %{socket: socket}
+ #       broadcast_from!(socket,"fin_subasta", subasta_terminada)
+
+
+    #end
   end
 
   # Add authorization logic here as required.

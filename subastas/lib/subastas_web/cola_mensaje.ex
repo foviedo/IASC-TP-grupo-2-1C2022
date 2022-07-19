@@ -56,16 +56,24 @@ defmodule SubastasWeb.ColaMensaje do
   end
 
   def update_comprador(compradores, id, socket_nuevo) do
-    c = Enum.filter(compradores, fn comprador -> comprador.id == id end)
+    c = Enum.filter(compradores, fn comprador -> comprador["id"] == id end)
     comprador = hd c
-    comprador_actualizado = Map.update!(comprador, :socket, fn socket -> socket_nuevo end)
+    comprador_actualizado = Map.update!(comprador, "socket", fn socket -> socket_nuevo end)
     compradores = List.delete(compradores, comprador)
     compradores ++ [comprador_actualizado]
   end
 
   def update_subasta_oferta(oferta) do
+    Logger.warn(fn -> "Apenas entramos subastas #{inspect(SubastasWeb.ColaMensaje.get_subastas)}" end)
+    Logger.warn(fn -> "Apenas entramos ofertas #{inspect(oferta)}" end)
     subastas = Enum.filter(get_subastas, fn subasta -> subasta["id"] == oferta["id_subasta"] end)
+    Logger.warn(fn -> " Y como esta la var sibastas? #{inspect(subastas)}" end)
+
     subasta = hd subastas
+
+    Logger.warn(fn -> " Y como esta la var sibastas despues de hd #{inspect(subasta)}" end)
+    Logger.warn(fn -> " Y como esta subasTas? #{inspect(SubastasWeb.ColaMensaje.get_subastas)}" end)
+
     subasta_actualizada = Map.update!(subasta, "precio", fn precio -> oferta["precio"] end)
     subastas_actuales = get_subastas()
     subastas = List.delete(subastas_actuales, subasta)
@@ -73,8 +81,8 @@ defmodule SubastasWeb.ColaMensaje do
     subasta_actualizada
   end
 
-  def cancelar_subasta(id) do
-    subasta = get_subasta(id)
+  def cancelar_subasta(cancel_subasta) do
+    subasta = get_subasta(cancel_subasta["id"])
     update_subasta_estado(subasta, "cancelado")
   end
 

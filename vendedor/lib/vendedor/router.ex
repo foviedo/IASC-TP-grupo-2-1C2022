@@ -20,6 +20,16 @@ defmodule Vendedor.Router do
     send_resp(conn, 200, "New subasta exitosa")
   end
 
+  post "/cancel_subasta" do
+    #{id y tag}
+    cancel_subasta = conn.body_params
+    {:ok, _response, channel} = Channel.join(Socket, "tag:" <> cancel_subasta["tag"], "vendedor")
+    :ok = Channel.push_async(channel, "cancel_subasta", cancel_subasta)
+    Channel.leave(channel)
+    send_resp(conn, 200, "Subasta Cancelada Exitosamente")
+  end
+
+
   match _ do
     send_resp(conn, 404, "Oops!")
   end

@@ -13,9 +13,9 @@ defmodule Comprador do
 
     # List all child processes to be supervised
     children = [
-      {Plug.Cowboy, scheme: :http, plug: Comprador.Router, options: [port: 8081]},
+    #  {Plug.Cowboy, scheme: :http, plug: Comprador.Router, options: [port: 8081]},
       {Comprador.Socket, {socket_opts, name: Comprador.Socket}},
-      {Comprador.ColaMensaje, %{:subastas => [], :subastas_ofertadas => [], :mis_ofertas => []}},
+      {Comprador.ColaMensaje, %{:subastas => [], :mis_ofertas => []}},
       #{Comprador.ColaMensaje, []},
       # Starts a worker by calling: Comprador.Worker.start_link(arg)
       # {Comprador.Worker, arg}

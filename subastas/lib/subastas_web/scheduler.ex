@@ -26,6 +26,7 @@ defmodule SubastasWeb.Scheduler do
     subastas = SubastasWeb.ColaMensaje.get_subastas()
     #Logger.info(fn -> "Subastasssssssssssssssss #{inspect(subastas)}" end)
     vencidas = Enum.filter(subastas, fn subasta -> subasta["duracion"] <= 0 end)
+    #vencidas_no_terminadas = Enum.filter(vencidas, fn subasta -> subasta["estado"] != "terminada" && subasta["estado"] != "cancelado" end)
     vencidas_no_terminadas = Enum.filter(vencidas, fn subasta -> subasta["estado"] != "terminada" end)
     #Logger.warn(fn -> "vencidas no terminadas #{inspect(vencidas_no_terminadas)}" end)
     if vencidas_no_terminadas != [] do
