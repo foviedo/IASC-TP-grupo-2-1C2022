@@ -1,7 +1,5 @@
 defmodule SubastasWeb.RoomChannel do
   use SubastasWeb, :channel
-  alias Phoenix.Socket.Broadcast
-
 
   require Logger
 
@@ -14,6 +12,8 @@ defmodule SubastasWeb.RoomChannel do
       ["comprador", id] ->
         comprador = Enum.filter(SubastasWeb.ColaMensaje.get_compradores, fn comprador -> comprador.id == id end)
         if(comprador == []) do
+          #Map.put(socket.assigns, :user_id, id)
+          #Logger.warn(fn -> "sockettt #{inspect(socket.assigns)}" end)
           SubastasWeb.ColaMensaje.add_new_comprador(%{id: id, socket: socket})
         else
           SubastasWeb.ColaMensaje.update_comprador(id, socket)
@@ -65,11 +65,11 @@ defmodule SubastasWeb.RoomChannel do
   def handle_out_fin_subasta(subasta) do
     subasta_terminada = SubastasWeb.ColaMensaje.update_subasta_estado(subasta, "terminada")
 
-    id_subasta = subasta["id"]
-    precio_ganado = subasta["precio"]
+    #id_subasta = subasta["id"]
+    #precio_ganado = subasta["precio"]
 
-    ofertas = Enum.filter(SubastasWeb.ColaMensaje.get_ofertas,
-    fn oferta -> oferta["id_subasta"] == id_subasta && oferta["precio"] == precio_ganado end)
+    #ofertas = Enum.filter(SubastasWeb.ColaMensaje.get_ofertas,
+    #fn oferta -> oferta["id_subasta"] == id_subasta && oferta["precio"] == precio_ganado end)
 
 
 
@@ -91,18 +91,11 @@ defmodule SubastasWeb.RoomChannel do
       Logger.warn(fn -> "Comrpador donde estas #{inspect(hd SubastasWeb.ColaMensaje.get_compradores)}" end)
 
       Logger.warn(fn -> "PRUEBAAAAA #{inspect(comp_prueba.socket)} subasta terminada #{inspect(subasta_terminada)}" end)
-      #houston acá estan los problemas TODO
-      #broadcast(self(),"tag:fruta", "fin_subasta", subasta_terminada)
 
-
-       # {:ok, _, socket} =
-       #   SubastasWeb.UserSocket
-       #   |> socket("user_id", %{some: :assign})
-       #   |> subscribe_and_join(SubastasWeb.RoomChannel, "tag:fruta")
-
-#        %{socket: socket}
- #       broadcast_from!(socket,"fin_subasta", subasta_terminada)
-
+      SubastasWeb.Endpoint.broadcast("tag:fruta", "fin_subasta", subasta_terminada)
+      #Logger.warn(fn -> "info #{inspect(comp_prueba.socket.assigns.user_id)}" end)
+      #SubastasWeb.Endpoint.broadcast("user:#"<>comp_prueba.socket.assigns.user_id, "fin_subasta", subasta_terminada)
+      #user_socket
 
     #end
   end

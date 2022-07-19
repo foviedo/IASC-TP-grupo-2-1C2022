@@ -18,7 +18,6 @@ defmodule SubastasWeb.UserSocket do
   #
   # See the [`Channels guide`](https://hexdocs.pm/phoenix/channels.html)
   # for further details.
-  channel "room:*", SubastasWeb.RoomChannel
   channel "tag:*", SubastasWeb.RoomChannel
 
   # Socket params are passed from the client and can

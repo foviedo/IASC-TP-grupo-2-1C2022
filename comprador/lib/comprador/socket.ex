@@ -167,6 +167,14 @@ defmodule Comprador.Socket do
     {:reply, state.status, state}
   end
 
+
+  @impl true
+  def handle_cast({:ganaste_subasta, message}, state) do
+    Logger.warn(fn -> "gannneeeeeee" end)
+    Comprador.ColaMensaje.update_subasta(message)
+    {:noreply, state}
+  end
+
   @impl true
   def handle_info({:connected, transport_pid}, %{transport_pid: transport_pid} = state) do
     {:noreply, %{state | status: :connected}}
@@ -251,7 +259,7 @@ defmodule Comprador.Socket do
       #Logger.warn(fn -> "Unknown message #{inspect(other_msg)}" end)
       "new_subastas" -> Comprador.ColaMensaje.add_new_subasta(decoded.payload)
       "new_oferta" ->  Comprador.ColaMensaje.update_subasta(decoded.payload)
-      "fin_subasta" -> Comprador.ColaMensaje.remove_subasta(decoded.payload)
+      "fin_subasta" -> Comprador.ColaMensaje.update_subasta(decoded.payload)
       _ -> nil
     end
     case Map.get(channels, decoded.topic) do

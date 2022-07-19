@@ -1,6 +1,8 @@
 defmodule Comprador.Channel do
   use GenServer
 
+  require Logger
+
   alias Comprador.{Socket, ChannelSupervisor, Message}
 
   @timeout 5_000

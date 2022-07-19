@@ -47,6 +47,15 @@ defmodule Comprador.ColaMensaje do
     Agent.update(__MODULE__, &Map.put(&1,:subastas, Map.get(&1,:subastas) ++ [subasta_actualizada]))
   end
 
+  def update_subasta_gane(subasta) do
+    s = Enum.filter(get_subastas, fn subs -> subs["id"] == subasta["id"] end)
+    sub = hd s
+    subast = Map.update!(sub, "precio", fn precio -> subasta["precio"] end)
+    subasta_actualizada = Map.update!(subast, "estado", fn estado -> "gane" end)
+    List.delete(get_subastas, s)
+    Agent.update(__MODULE__, &Map.put(&1,:subastas, Map.get(&1,:subastas) ++ [subasta_actualizada]))
+  end
+
   def remove_subasta(subasta) do
     #buscar la subasta con el id de la subasta que llega subasta["id"], y despues borrarla de la lista &1[:subastas]
     #subasta = XXXXX
