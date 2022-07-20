@@ -6,15 +6,16 @@ defmodule Vendedor do
   use Application
 
   def start(_type, _args) do
-    #{:ok, socket} = Vendedor.Socket.start_link([url: "ws://localhost:4000/socket/websocket"])
+
     socket_opts = [
       url: "ws://localhost:4000/socket/websocket"
     ]
 
     topologies = [
       example: [
-        strategy: Cluster.Strategy.Epmd,
-        config: [hosts: [:"subastas@127.0.0.1"]],
+        #strategy: Cluster.Strategy.Epmd,
+        strategy: Elixir.Cluster.Strategy.LocalEpmd
+        #config: [hosts: [:"subastas@127.0.0.1"]],
       ]
     ]
     # List all child processes to be supervised

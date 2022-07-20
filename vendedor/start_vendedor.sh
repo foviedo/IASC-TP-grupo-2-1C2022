@@ -1,2 +1,2 @@
 #!/bin/bash
-iex --name vendedor@127.0.0.1 -S mix
+iex --name vendedorA@127.0.0.1 --cookie asdf -S mix

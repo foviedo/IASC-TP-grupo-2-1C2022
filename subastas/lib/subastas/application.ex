@@ -10,8 +10,9 @@ defmodule Subastas.Application do
 
     topologies = [
       example: [
-        strategy: Cluster.Strategy.Epmd,
-        config: [hosts: [:"vendedor@127.0.0.1",:"compradorA@127.0.0.1" ]],
+        #strategy: Cluster.Strategy.Epmd,
+        strategy: Elixir.Cluster.Strategy.LocalEpmd
+        #config: [hosts: [:"vendedor@127.0.0.1",:"compradorA@127.0.0.1" ]],
       ]
     ]
 

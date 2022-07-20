@@ -4,12 +4,10 @@ defmodule Comprador.Mixfile do
   def project do
     [
       app: :comprador,
-      version: "0.11.1",
+      version: "0.1.0",
       elixir: "~> 1.6",
       build_embedded: Mix.env() == :prod,
       start_permanent: Mix.env() == :prod,
-      description: description(),
-      docs: [extras: ["README.md"], main: "readme"],
       deps: deps()
     ]
   end
@@ -17,8 +15,7 @@ defmodule Comprador.Mixfile do
   def application do
     [
       extra_applications: [:logger, :ssl],
-      mod: {Comprador, []},
-      applications: [:cowboy]
+      mod: {Comprador, []}
     ]
   end
 
@@ -30,14 +27,9 @@ defmodule Comprador.Mixfile do
       {:plug_cowboy, "~> 1.0"},
       {:ex_doc, "~> 0.18", only: :dev},
       {:libcluster, "~> 3.3"},
-      {:horde, "~> 0.8.7"}
+      {:horde, "~> 0.8.7"},
+      {:poison, "~> 5.0"}
     ]
-  end
-
-  defp description do
-    """
-    Connect to Phoenix Channels from Elixir
-    """
   end
 
 end

@@ -4,12 +4,10 @@ defmodule Vendedor.Mixfile do
   def project do
     [
       app: :Vendedor,
-      version: "0.11.1",
+      version: "0.1.0",
       elixir: "~> 1.6",
       build_embedded: Mix.env() == :prod,
       start_permanent: Mix.env() == :prod,
-      description: description(),
-      docs: [extras: ["README.md"], main: "readme"],
       deps: deps()
     ]
   end
@@ -31,11 +29,5 @@ defmodule Vendedor.Mixfile do
       {:libcluster, "~> 3.3"},
       {:horde, "~> 0.8.7"}
     ]
-  end
-
-  defp description do
-    """
-    Connect to Phoenix Channels from Elixir
-    """
   end
 end

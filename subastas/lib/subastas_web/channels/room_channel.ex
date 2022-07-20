@@ -6,7 +6,8 @@ defmodule SubastasWeb.RoomChannel do
 
   @impl true
   def join("tag:" <> _private_room_id, message, socket) do
-    {:ok, SubastasWeb.ColaMensaje.get_subastas, socket}
+    subastas = Enum.filter(SubastasWeb.ColaMensaje.get_subastas, fn s -> s["tag"] == _private_room_id end)
+    {:ok, subastas, socket}
   end
 
   @impl true
