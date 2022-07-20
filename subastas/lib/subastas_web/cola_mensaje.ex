@@ -42,16 +42,16 @@ defmodule SubastasWeb.ColaMensaje do
   def update_subasta_oferta(oferta) do
     subastas = Enum.filter(get_subastas, fn subasta -> subasta["id"] == oferta["id_subasta"] end)
     subasta = hd subastas
+    subastas_sin_subasta = List.delete(get_subastas(), subasta)
     subasta_actualizada = Map.update!(subasta, "precio", fn precio -> oferta["precio"] end)
-    subastas_actuales = get_subastas()
-    subastas_sin_subasta = List.delete(subastas_actuales, subasta)
-    Agent.update(__MODULE__,  &Map.put(&1,:subastas, subastas_sin_subasta ++ [subasta_actualizada]))
-    subasta_actualizada
+    subasta_actualizada_ofertada = SubastasWeb.ColaMensaje.update_subasta_estado(subasta_actualizada, "ofertada")
+    Agent.update(__MODULE__,  &Map.put(&1,:subastas, subastas_sin_subasta ++ [subasta_actualizada_ofertada]))
+    subasta_actualizada_ofertada
   end
 
   def cancelar_subasta(cancel_subasta) do
     subasta = get_subasta(cancel_subasta["id"])
-    update_subasta_estado(subasta, "cancelado")
+    subasta_cancelada = update_subasta_estado(subasta, "cancelada")
   end
 
   defp get_subasta(id) do
@@ -62,6 +62,7 @@ defmodule SubastasWeb.ColaMensaje do
     subasta_actualizada = Map.update!(subasta, "duracion", fn duracion -> duracion - 1000 end)
     subastas = List.delete(get_subastas, subasta)
     Agent.update(__MODULE__,  &Map.put(&1,:subastas, subastas ++ [subasta_actualizada]))
+    subasta_actualizada
   end
 
   def update_subasta_estado(subasta, estado) do
