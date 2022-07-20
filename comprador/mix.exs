@@ -9,7 +9,6 @@ defmodule Comprador.Mixfile do
       build_embedded: Mix.env() == :prod,
       start_permanent: Mix.env() == :prod,
       description: description(),
-      package: package(),
       docs: [extras: ["README.md"], main: "readme"],
       deps: deps()
     ]
@@ -29,7 +28,9 @@ defmodule Comprador.Mixfile do
       {:jason, "~> 1.0", optional: true},
       {:phoenix, github: "phoenixframework/phoenix", tag: "v1.5.1", only: :test},
       {:plug_cowboy, "~> 1.0"},
-      {:ex_doc, "~> 0.18", only: :dev}
+      {:ex_doc, "~> 0.18", only: :dev},
+      {:libcluster, "~> 3.3"},
+      {:horde, "~> 0.8.7"}
     ]
   end
 
@@ -39,10 +40,4 @@ defmodule Comprador.Mixfile do
     """
   end
 
-  defp package do
-    [
-      licenses: ["Apache-2.0"],
-      links: %{"GitHub" => "https://github.com/mobileoverlord/phoenix_client"}
-    ]
-  end
 end

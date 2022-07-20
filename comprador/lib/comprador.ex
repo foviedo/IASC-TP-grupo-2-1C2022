@@ -11,11 +11,21 @@ defmodule Comprador do
       url: "ws://localhost:4000/socket/websocket"
     ]
 
+    topologies = [
+      example: [
+        strategy: Cluster.Strategy.Epmd,
+        config: [hosts: [:"subastas@127.0.0.1"]],
+      ]
+    ]
+
     # List all child processes to be supervised
     children = [
     #  {Plug.Cowboy, scheme: :http, plug: Comprador.Router, options: [port: 8081]},
       #{Comprador.Socket, {socket_opts, name: Comprador.Socket}},
       {Comprador.ColaMensaje, %{subastas: [], mis_ofertas: []}},
+      {Horde.Registry, [name: Comprador.Registry, keys: :unique]},
+      {Horde.DynamicSupervisor, [name: Comprador.DistributedSupervisor, strategy: :one_for_one]},
+      {Cluster.Supervisor, [topologies, [name: Comprador.ClusterSupervisor]]},
       #{Comprador.ColaMensaje, []},
       # Starts a worker by calling: Comprador.Worker.start_link(arg)
       # {Comprador.Worker, arg}

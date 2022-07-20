@@ -11,13 +11,15 @@ defmodule Subastas.Application do
     topologies = [
       example: [
         strategy: Cluster.Strategy.Epmd,
-        config: [hosts: [:"vendedor@127.0.0.1", :"subastas@127.0.0.1", :"compradorA@127.0.0.1" ]],
+        config: [hosts: [:"vendedor@127.0.0.1",:"compradorA@127.0.0.1" ]],
       ]
     ]
+
     children = [
       {SubastasWeb.ColaMensaje, %{subastas: [], vendedores: [], compradores: [], ofertas: []}},
-      {Horde.DynamicSupervisor, [name: MyApp.DistributedSupervisor, strategy: :one_for_one]},
-      {Cluster.Supervisor, [topologies, [name: MyApp.ClusterSupervisor]]},
+      {Horde.Registry, [name: Subastas.HordeRegistry, keys: :unique]},
+      {Horde.DynamicSupervisor, [name: Subastas.HordeSupervisor, strategy: :one_for_one]},
+      {Cluster.Supervisor, [topologies, [name: Subastas.ClusterSupervisor]]},
       # Start the Telemetry supervisor
       SubastasWeb.Telemetry,
       # Start the PubSub system

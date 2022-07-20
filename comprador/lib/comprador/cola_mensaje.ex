@@ -22,10 +22,6 @@ defmodule Comprador.ColaMensaje do
     Agent.get(__MODULE__, & Map.get(&1, :subastas))
   end
 
-  def add(mensaje) do
-    Agent.update(__MODULE__, &(&1 ++ mensaje))
-  end
-
   def add_new_subastas(subastas) do
     Agent.update(__MODULE__, &Map.put(&1,:subastas, Map.get(&1,:subastas) ++ subastas))
   end
@@ -64,13 +60,6 @@ defmodule Comprador.ColaMensaje do
     subast = Map.update!(sub, "precio", fn precio -> subasta["precio"] end)
     subasta_actualizada = Map.update!(subast, "estado", fn estado -> "gane" end)
     Agent.update(__MODULE__, &Map.put(&1,:subastas, subasta_sin_sub ++ [subasta_actualizada]))
-  end
-
-  def remove_subasta(subasta) do
-    #buscar la subasta con el id de la subasta que llega subasta["id"], y despues borrarla de la lista &1[:subastas]
-    #subasta = XXXXX
-    #subastas = Lista.delete(get_subastas, subasta)
-    #Agent.update(__MODULE__,  &Map.put(&1,:subastas, subastas))
   end
 
 end
