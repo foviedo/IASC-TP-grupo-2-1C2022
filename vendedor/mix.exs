@@ -28,7 +28,8 @@ defmodule Vendedor.Mixfile do
       {:jason, "~> 1.0", optional: true},
       {:phoenix, github: "phoenixframework/phoenix", tag: "v1.5.1", only: :test},
       {:plug_cowboy, "~> 2.0"},
-      {:ex_doc, "~> 0.18", only: :dev}
+      {:ex_doc, "~> 0.18", only: :dev},
+      {:libcluster, "~> 3.3"}
     ]
   end
 

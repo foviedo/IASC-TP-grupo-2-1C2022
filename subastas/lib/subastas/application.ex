@@ -7,8 +7,17 @@ defmodule Subastas.Application do
 
   @impl true
   def start(_type, _args) do
+
+    topologies = [
+      example: [
+        strategy: Cluster.Strategy.Epmd,
+        config: [hosts: [:"vendedor@127.0.0.1", :"subastas@127.0.0.1", :"compradorA@127.0.0.1" ]],
+      ]
+    ]
     children = [
       {SubastasWeb.ColaMensaje, %{subastas: [], vendedores: [], compradores: [], ofertas: []}},
+      {Horde.DynamicSupervisor, [name: MyApp.DistributedSupervisor, strategy: :one_for_one]},
+      {Cluster.Supervisor, [topologies, [name: MyApp.ClusterSupervisor]]},
       # Start the Telemetry supervisor
       SubastasWeb.Telemetry,
       # Start the PubSub system
@@ -23,11 +32,10 @@ defmodule Subastas.Application do
 
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options
+
     opts = [strategy: :one_for_one, name: Subastas.Supervisor]
     Supervisor.start_link(children, opts)
   end
-
-
 
   # Tell Phoenix to update the endpoint configuration
   # whenever the application is updated.
