@@ -24,13 +24,13 @@ defmodule SubastasWeb.Scheduler do
 
   defp do_recurrent_thing(state) do
     subastas = SubastasWeb.ColaMensaje.get_subastas()
-    #Logger.info(fn -> "Subastasssssssssssssssss #{inspect(subastas)}" end)
+
     vencidas = Enum.filter(subastas, fn subasta -> subasta["duracion"] <= 0 end)
-    #vencidas_no_terminadas = Enum.filter(vencidas, fn subasta -> subasta["estado"] != "terminada" && subasta["estado"] != "cancelado" end)
-    vencidas_no_terminadas = Enum.filter(vencidas, fn subasta -> subasta["estado"] != "terminada" end)
-    #Logger.warn(fn -> "vencidas no terminadas #{inspect(vencidas_no_terminadas)}" end)
-    if vencidas_no_terminadas != [] do
-      Enum.each(vencidas_no_terminadas, fn subasta -> SubastasWeb.RoomChannel.handle_out_fin_subasta(subasta) end)
+
+    vencidas_no_terminadas_ganadas = Enum.filter(vencidas, fn subasta -> subasta["estado"] != "terminada" &&  subasta["estado"] != "ganada" end)
+    #Logger.warn(fn -> "message #{inspect(vencidas_no_terminadas_ganadas)}" end)
+    if vencidas_no_terminadas_ganadas != [] do
+      Enum.each(vencidas_no_terminadas_ganadas, fn subasta -> SubastasWeb.RoomChannel.handle_out_fin_subasta(subasta) end)
     end
     no_terminadas = Enum.filter(SubastasWeb.ColaMensaje.get_subastas(), fn subasta -> subasta["estado"] != "terminada" end)
     Enum.each(no_terminadas, fn subasta -> SubastasWeb.ColaMensaje.update_subasta_duracion(subasta) end)

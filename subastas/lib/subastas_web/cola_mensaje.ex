@@ -34,50 +34,18 @@ defmodule SubastasWeb.ColaMensaje do
     Agent.update(__MODULE__, &Map.put(&1,:subastas, Map.get(&1,:subastas) ++ [subasta]))
   end
 
-  def add_subasta_terminada(subasta) do
-    Agent.update(__MODULE__, &Map.put(&1,:subastas_terminadas, Map.get(&1,:subastas_terminadas) ++ [subasta]))
-  end
 
   def add_new_oferta(oferta) do
-    ofertas = & &1.ofertas ++ [oferta]
-    Agent.update(__MODULE__, &(Map.replace!(&1, :ofertas, ofertas)))
-  end
-
-  def add_new_comprador(comprador) do
-    Agent.update(__MODULE__, &Map.put(&1,:compradores, Map.get(&1,:compradores) ++ [comprador]))
-  end
-
-  def update_comprador(id,socket_nuevo) do
-    Agent.update(__MODULE__,  &Map.put(&1,:compradores, update_comprador(Map.get(&1,:compradores), id, socket_nuevo)))
-  end
-
-  def add_new_vendedor(vendedor) do
-    Agent.update(__MODULE__, &Map.put(&1,:vendedores, Map.get(&1,:vendedores) ++ [vendedor]))
-  end
-
-  def update_comprador(compradores, id, socket_nuevo) do
-    c = Enum.filter(compradores, fn comprador -> comprador["id"] == id end)
-    comprador = hd c
-    comprador_actualizado = Map.update!(comprador, "socket", fn socket -> socket_nuevo end)
-    compradores = List.delete(compradores, comprador)
-    compradores ++ [comprador_actualizado]
+    Agent.update(__MODULE__, &Map.put(&1,:ofertas, Map.get(&1,:ofertas) ++ [oferta]))
   end
 
   def update_subasta_oferta(oferta) do
-    Logger.warn(fn -> "Apenas entramos subastas #{inspect(SubastasWeb.ColaMensaje.get_subastas)}" end)
-    Logger.warn(fn -> "Apenas entramos ofertas #{inspect(oferta)}" end)
     subastas = Enum.filter(get_subastas, fn subasta -> subasta["id"] == oferta["id_subasta"] end)
-    Logger.warn(fn -> " Y como esta la var sibastas? #{inspect(subastas)}" end)
-
     subasta = hd subastas
-
-    Logger.warn(fn -> " Y como esta la var sibastas despues de hd #{inspect(subasta)}" end)
-    Logger.warn(fn -> " Y como esta subasTas? #{inspect(SubastasWeb.ColaMensaje.get_subastas)}" end)
-
     subasta_actualizada = Map.update!(subasta, "precio", fn precio -> oferta["precio"] end)
     subastas_actuales = get_subastas()
-    subastas = List.delete(subastas_actuales, subasta)
-    Agent.update(__MODULE__,  &Map.put(&1,:subastas, subastas ++ [subasta_actualizada]))
+    subastas_sin_subasta = List.delete(subastas_actuales, subasta)
+    Agent.update(__MODULE__,  &Map.put(&1,:subastas, subastas_sin_subasta ++ [subasta_actualizada]))
     subasta_actualizada
   end
 
@@ -101,10 +69,5 @@ defmodule SubastasWeb.ColaMensaje do
     subasta_actualizada = Map.update!(subasta, "estado", fn e -> estado end)
     Agent.update(__MODULE__,  &Map.put(&1,:subastas, subastas ++ [subasta_actualizada]))
     subasta_actualizada
-  end
-
-  def remove_subasta(subasta) do
-    subastas = List.delete(get_subastas, subasta)
-    Agent.update(__MODULE__,  &Map.put(&1,:subastas, subastas))
   end
 end

@@ -60,6 +60,11 @@ defmodule Comprador.Channel do
     end
   end
 
+  def join_unificado(socket_pid, topic, id, params) do
+    Comprador.Channel.join(socket_pid, "tag:"<>topic, params)
+    Comprador.Channel.join(socket_pid, "user:"<>id, params)
+  end
+
   @doc """
   Leave the channel topic and stop the channel
   """
@@ -181,7 +186,7 @@ defmodule Comprador.Channel do
       case GenServer.call(pid, :join, timeout) do
         {:ok, reply} ->
           Process.link(pid)
-          Comprador.ColaMensaje.add_new_subasta(reply)
+          Comprador.ColaMensaje.add_new_subastas(reply)
           {:ok, reply, pid}
 
         error ->

@@ -254,12 +254,12 @@ defmodule Comprador.Socket do
          json_library: json_library
        }) do
     decoded = Message.decode!(serializer, message, json_library)
- #:ok = Comprador.Channel.push_async(channel, "new_oferta",%{"id_comprador" => 1,"id_subasta" => "1","precio" => 120})
+    Logger.warn(fn -> "message #{inspect(decoded.payload)}" end)
     case decoded.event do
-      #Logger.warn(fn -> "Unknown message #{inspect(other_msg)}" end)
-      "new_subastas" -> Comprador.ColaMensaje.add_new_subasta(decoded.payload)
+      "new_subasta" -> Comprador.ColaMensaje.add_new_subasta(decoded.payload)
       "new_oferta" ->  Comprador.ColaMensaje.update_subasta(decoded.payload)
       "fin_subasta" -> Comprador.ColaMensaje.update_subasta(decoded.payload)
+      "ganaste_subasta" -> Comprador.ColaMensaje.update_subasta(decoded.payload)
       _ -> nil
     end
     case Map.get(channels, decoded.topic) do

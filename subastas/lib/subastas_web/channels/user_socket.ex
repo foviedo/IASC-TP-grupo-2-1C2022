@@ -1,6 +1,8 @@
 defmodule SubastasWeb.UserSocket do
   use Phoenix.Socket
 
+  require Logger
+
   # A Socket handler
   #
   # It's possible to control the websocket connection and
@@ -19,6 +21,7 @@ defmodule SubastasWeb.UserSocket do
   # See the [`Channels guide`](https://hexdocs.pm/phoenix/channels.html)
   # for further details.
   channel "tag:*", SubastasWeb.RoomChannel
+  channel "user:*", SubastasWeb.RoomChannel
 
   # Socket params are passed from the client and can
   # be used to verify and authenticate a user. After
@@ -33,7 +36,10 @@ defmodule SubastasWeb.UserSocket do
   # performing token verification on connect.
   @impl true
   def connect(_params, socket, _connect_info) do
-    {:ok, socket}
+
+    #socket_nuevo = assign(socket, :user_id, _params["id"])
+    #Logger.warn(fn -> "sockettttttttttttttt #{inspect(socket_nuevo)}" end)
+    {:ok,socket}
   end
 
   # Socket id's are topics that allow you to identify all sockets for a given user:
@@ -47,5 +53,5 @@ defmodule SubastasWeb.UserSocket do
   #
   # Returning `nil` makes this socket anonymous.
   @impl true
-  def id(_socket), do: nil
+  def id(socket), do: nil #"user:#{socket.assigns.user_id}"
 end
