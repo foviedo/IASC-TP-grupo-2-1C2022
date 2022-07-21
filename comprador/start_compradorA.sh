@@ -1,2 +1,2 @@
 #!/bin/bash
-iex --name compradorA@127.0.0.1 --cookie asdf -S mix
+PORT=8082 iex --name compradorB@127.0.0.1 --cookie asdf -S mix
