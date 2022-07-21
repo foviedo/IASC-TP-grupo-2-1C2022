@@ -58,6 +58,10 @@ defmodule Comprador.Router do
     end
   end
 
+  get "/crash" do
+    raise "adios mundo cruel!"
+  end
+
   match _ do
     send_resp(conn, 404, "Oops!")
   end

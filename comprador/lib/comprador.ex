@@ -10,6 +10,7 @@ defmodule Comprador do
       url: "ws://localhost:4000/socket/websocket"
     ]
 
+    port = String.to_integer(System.get_env("PORT") || "8081")
     topologies = [
       example: [
         #strategy: Cluster.Strategy.Epmd,
@@ -20,7 +21,7 @@ defmodule Comprador do
 
     # List all child processes to be supervised
     children = [
-      {Plug.Cowboy, scheme: :http, plug: Comprador.Router, options: [port: 8082]},
+      {Plug.Cowboy, scheme: :http, plug: Comprador.Router, options: [port: port]},
       {Comprador.Socket, {socket_opts, name: Comprador.Socket}},
       {Comprador.ColaMensaje, %{subastas: [], mis_ofertas: [], tags: []}},
       {Horde.Registry, [name: Comprador.Registry, keys: :unique]},

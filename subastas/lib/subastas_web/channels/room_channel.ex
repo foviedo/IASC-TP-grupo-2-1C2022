@@ -26,7 +26,7 @@ defmodule SubastasWeb.RoomChannel do
   def handle_in("new_subasta", payload, socket) do
     SubastasWeb.ColaMensaje.add_new_subasta(payload)
     broadcast!(socket, "new_subasta", payload)
-    Logger.warn(fn -> "Payloadd #{inspect(payload)}" end)
+    Logger.warn(fn -> "Subasta nueva #{inspect(payload)}" end)
     {:noreply, socket}
   end
 
@@ -42,7 +42,7 @@ defmodule SubastasWeb.RoomChannel do
   @impl true
   def handle_in("cancel_subasta", payload, socket) do
     subasta_cancelada = SubastasWeb.ColaMensaje.cancelar_subasta(payload)
-    Logger.warn(fn -> "Subastas #{inspect(subasta_cancelada)}" end)
+    Logger.warn(fn -> "Subasta cancelada #{inspect(subasta_cancelada)}" end)
     broadcast!(socket, "fin_subasta", subasta_cancelada)
     {:noreply, socket}
   end
