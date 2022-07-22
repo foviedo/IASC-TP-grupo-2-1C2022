@@ -52,7 +52,6 @@ defmodule Comprador.ColaMensaje do
     s = Enum.filter(get_subastas, fn subs -> subs["id"] == subasta["id"] end)
     sub = hd s
     subasta_sin_sub = List.delete(get_subastas, sub)
-    Logger.warn(fn -> "subastassssss actuales #{inspect(subasta_sin_sub)}" end)
 
     subast = Map.update!(sub, "precio", fn precio -> subasta["precio"] end)
     subasta_actualizada = Map.update!(subast, "estado", fn estado -> subasta["estado"] end)

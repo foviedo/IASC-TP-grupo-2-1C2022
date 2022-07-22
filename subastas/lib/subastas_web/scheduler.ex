@@ -27,7 +27,7 @@ defmodule SubastasWeb.Scheduler do
 
     vencidas = Enum.filter(subastas, fn subasta -> subasta["duracion"] <= 0 end)
 
-    vencidas_no_terminadas_ganadas = Enum.filter(vencidas, fn subasta -> subasta["estado"] != "terminada" &&  subasta["estado"] != "ganada" end)
+    vencidas_no_terminadas_ganadas = Enum.filter(vencidas, fn subasta -> subasta["estado"] != "terminada" &&  subasta["estado"] != "ganada" subasta["estado"] != "cancelada" end)
     #Logger.warn(fn -> "message #{inspect(vencidas_no_terminadas_ganadas)}" end)
     if vencidas_no_terminadas_ganadas != [] do
       Enum.each(vencidas_no_terminadas_ganadas, fn subasta -> SubastasWeb.RoomChannel.handle_out_fin_subasta(subasta) end)
